@@ -1,0 +1,2 @@
+all:
+	gcc main_1.c -lncurses functions_1.c -o hello1
