@@ -1,0 +1,10 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "command": "gcc",
+    "isShellCommand": true,
+    "args":["-g3", "manager.c", "-lncurses", "manager_functions.c", "-o", "manager"      
+    ],
+    "showOutput":"always"
+}

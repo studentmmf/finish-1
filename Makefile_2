@@ -1,0 +1,2 @@
+all:
+	gcc -g manager.c -lncurses manager_functions.c -o manager
