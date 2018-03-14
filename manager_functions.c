@@ -6,6 +6,12 @@
 #include <stdlib.h>
 #include "manager_functions.h"
 
+#define DEBUG(fmt, ...)                                                                       \
+        do                                                                                    \
+        {                                                                                     \
+                printf("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
+        } while (0)
+
 extern int SIZE, SIZE_INCREMENT, OLD_SIZE;
 extern int current_element, max_num;
 extern struct dirent **list;
@@ -18,7 +24,7 @@ void init_list()
                 *(list[t]->d_name) = '\0';
 }
 
-void update_list(const char *name)//обновляем список файлов в каталоге name
+void update_list(const char *name)
 {
         int errno = 0;
         int err = 0;
@@ -31,6 +37,7 @@ void update_list(const char *name)//обновляем список файлов
                 errno = 0;
 
                 list_1 = readdir(dir);
+
                 if (errno && !list_1)
                         perror("readdir");
                 if (list_1 == NULL)
@@ -108,7 +115,7 @@ int menu1()
         return ch;
 }
 
-void update_screen()//обновляем экран
+void update_screen()
 {
         int i;
         erase(); //чистим экран
@@ -149,19 +156,19 @@ void update_screen()//обновляем экран
         }
 }
 
-void mystrplus(char a[], char b[]) //справа к пути приписываем просто имя
+void mystrplus(char a[], char b[]) //справа к пути приписываем "/имя"
 {
         int i, j;
         for (i = 0; a[i] != '\0'; i++)
                 ;
-
-        for (j = i; b[j - i] != '\0'; j++)
+a[i] = '/';
+        for (j = i+1; b[j - i] != '\0'; j++)
                 a[j] = b[j - i];
 
         a[j] = '\0';
 }
 
-void mystrminus(char a[]) //от пути отсоединяем хвост "/....."
+void mystrminus(char a[]) //от пути отсоединяем хвост "/hbvfhkvdbv"
 {
         int i, j;
         for (j = 0; a[j] != '\0'; j++)

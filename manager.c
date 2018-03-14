@@ -25,7 +25,7 @@ int main()
         initscr();
 
         keypad(stdscr, TRUE); /////////?????????
-        DEBUG("hello :)");
+        
 
         int j;
         pid_t pid;
@@ -98,14 +98,14 @@ int main()
                         {
                         case '\n':
                                 if (list[current_element]->d_type == DT_DIR)
-                                {
+                                {DEBUG("hello world :)");
                                         mystrplus(path, list[current_element]->d_name);
 
                                         update_list(path); //открыть как каталог
 
                                 }
                                 else if (list[current_element]->d_type == DT_REG) //открыть в редакторе
-                                {DEBUG("hello world :)");
+                                {
                                         write_stack(path_1, path);
                                         mystrplus(path_1, list[current_element]->d_name);
                                         pid = fork();
