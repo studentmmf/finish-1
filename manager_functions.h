@@ -7,5 +7,5 @@ void mystrminus(char a[]);
 void init_list();
 void update_list(const char *name);
 void update_screen();
-void write_stack(char a[], char b[]);
+
 #endif

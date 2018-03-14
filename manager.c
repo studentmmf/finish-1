@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "manager_functions.h"
+#include <string.h>
 
 #define DEBUG(fmt, ...)                                                                       \
         do                                                                                    \
@@ -70,7 +71,7 @@ int main()
 
         update_list(cwd); //аварийный останов
 
-        write_stack(path, cwd); //адрес из cwd записываем в path
+        strcpy(path, cwd); //адрес из cwd записываем в path
 
         do
         {
@@ -99,6 +100,7 @@ int main()
                         case '\n':
                                 if (list[current_element]->d_type == DT_DIR)
                                 {DEBUG("hello world :)");
+
                                         mystrplus(path, list[current_element]->d_name);
 
                                         update_list(path); //открыть как каталог
@@ -106,7 +108,7 @@ int main()
                                 }
                                 else if (list[current_element]->d_type == DT_REG) //открыть в редакторе
                                 {
-                                        write_stack(path_1, path);
+                                        strcpy(path_1, path);
                                         mystrplus(path_1, list[current_element]->d_name);
                                         pid = fork();
                                         if (pid == -1)
@@ -128,8 +130,8 @@ int main()
                                 break;
                         case KEY_F(2): //переименовать
                                 printw("%s\n", "vvedite novoe imya");
-                                write_stack(new_path, path);
-                                write_stack(old_path, path);
+                                strcpy(new_path, path);
+                                strcpy(old_path, path);
 
                                 mystrplus(old_path, list[current_element]->d_name);
                                 scanw("%s", path_1); ///!!!
@@ -138,7 +140,7 @@ int main()
                                 update_list(path);
                                 break;
                         case KEY_F(3): //удалить
-                                write_stack(old_path, path);
+                                strcpy(old_path, path);
                                 mystrplus(old_path, list[current_element]->d_name);
                                 remove(old_path);
                                 update_list(path);
@@ -146,14 +148,14 @@ int main()
                         case KEY_F(4): //копировать файл
                                 if (list[current_element]->d_type == DT_REG)
                                 {
-                                        write_stack(src_path, path);
+                                        strcpy(src_path, path);
                                         mystrplus(src_path, list[current_element]->d_name);
                                 }
                                 else
                                         printw("%s\n", "ne mogu kopirovat dannyj tip fajla");
                                 break;
                         case KEY_F(5): //переместить по новому пути
-                                write_stack(old_path, path);
+                                strcpy(old_path, path);
                                 printw("%s\n", "vvedite novyj put"); //!!!
                                 scanw("%s", new_path);
                                 rename(old_path, new_path);
@@ -166,7 +168,7 @@ int main()
                 case KEY_F(2): //создать новый каталог в текущем каталоге
                         printw("%s\n", "vvedite imya novogo kataloga");
                         scanw("%s", new_path);
-                        write_stack(old_path, path);
+                        strcpy(old_path, path);
                         mystrplus(old_path, new_path);
                         mkdir(old_path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
                         update_list(path);
@@ -174,7 +176,7 @@ int main()
                 case KEY_F(3): //создать новый файл в текущем каталоге
                         printw("%s\n", "vvedite imya novogo fajla");
                         scanw("%s", new_path);
-                        write_stack(old_path, path);
+                        strcpy(old_path, path);
                         mystrplus(old_path, new_path);
                         if ((c = fopen(old_path, "w+")) == NULL)
                         {
@@ -192,7 +194,7 @@ int main()
                                 printw("%s\n", "ne udaetsya otkryt fajl4");
                                 return;
                         }
-                        write_stack(dst_path, path);
+                        strcpy(dst_path, path);
                         mystrplus(dst_path, path_1);
                         if ((g = fopen(dst_path, "w+")) == NULL)
                         {

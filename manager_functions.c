@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "manager_functions.h"
-
+#include <string.h>
 #define DEBUG(fmt, ...)                                                                       \
         do                                                                                    \
         {                                                                                     \
@@ -158,14 +158,8 @@ void update_screen()
 
 void mystrplus(char a[], char b[]) //справа к пути приписываем "/имя"
 {
-        int i, j;
-        for (i = 0; a[i] != '\0'; i++)
-                ;
-a[i] = '/';
-        for (j = i+1; b[j - i] != '\0'; j++)
-                a[j] = b[j - i];
-
-        a[j] = '\0';
+     strcat(a,"/");
+strcat(a, b);
 }
 
 void mystrminus(char a[]) //от пути отсоединяем хвост "/hbvfhkvdbv"
@@ -177,11 +171,11 @@ void mystrminus(char a[]) //от пути отсоединяем хвост "/hb
                 ;
         a[j - i] = '\0';
 }
-
+/*
 void write_stack(char a[], char b[]) //в массив a[] запишем массив b[]
 {
         int i;
         for (i = 0; b[i] != '\0'; i++)
                 a[i] = b[i];
         a[i] = '\0';
-}
+}*/
