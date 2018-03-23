@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
             }
 
             else
-                for (i = 0; argv[i]; i++)
+                for (i = 0; argv[1][i]; i++)
                     str[i] = argv[1][i];
 
             make_copy();

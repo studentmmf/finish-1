@@ -25,8 +25,8 @@ int main()
 {
         initscr();
 
-        keypad(stdscr, TRUE); /////////?????????
-        
+        keypad(stdscr, TRUE); 
+       
 
         int j;
         pid_t pid;
@@ -99,7 +99,7 @@ int main()
                         {
                         case '\n':
                                 if (list[current_element]->d_type == DT_DIR)
-                                {DEBUG("hello world :)");
+                                {
 
                                         mystrplus(path, list[current_element]->d_name);
 
@@ -117,6 +117,7 @@ int main()
                                         if (!pid)
                                         {
                                                 const char *args[] = {"editor", path_1, NULL};
+
                                                 ret = execv("/home/grigoriy/Рабочий стол/hello1/editor", args);
                                                 if (ret == -1)
                                                 {
@@ -154,8 +155,9 @@ int main()
                                 else
                                         printw("%s\n", "ne mogu kopirovat dannyj tip fajla");
                                 break;
-                        case KEY_F(5): //переместить по новому пути
+                        case KEY_F(5): //переместить по новому пути?????????
                                 strcpy(old_path, path);
+                                mystrplus(old_path, list[current_element]->d_name);
                                 printw("%s\n", "vvedite novyj put"); //!!!
                                 scanw("%s", new_path);
                                 rename(old_path, new_path);
@@ -223,18 +225,23 @@ int main()
                 }
 
         } while (choice != 'q');
+ 
+        
+
+       
 
         refresh();
         getch();
 
         endwin();
-        
+
+       
+
         for (j = 0; j < SIZE; j++)
                 free(list[j]); ////???????
-
+ 
         free(list);
-
-
+//DEBUG(" goodbye world :(");
 
         return 0;
 }

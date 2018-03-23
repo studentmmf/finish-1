@@ -70,7 +70,7 @@ void edit()
     }
 
     for (;;)
-    { //////////////////////////////////mozhet ispravit?? nado li?
+    { 
         printw("(w): prodolzhit\n");
         printw("(q): nazad\n");
         refresh();

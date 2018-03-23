@@ -171,11 +171,4 @@ void mystrminus(char a[]) //от пути отсоединяем хвост "/hb
                 ;
         a[j - i] = '\0';
 }
-/*
-void write_stack(char a[], char b[]) //в массив a[] запишем массив b[]
-{
-        int i;
-        for (i = 0; b[i] != '\0'; i++)
-                a[i] = b[i];
-        a[i] = '\0';
-}*/
+
