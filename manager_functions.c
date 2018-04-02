@@ -12,17 +12,11 @@
                 printf("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
         } while (0)
 
-extern int SIZE, SIZE_INCREMENT, OLD_SIZE;
-extern int current_element, max_num;
-extern struct dirent **list;
-extern struct dirent *list_1;
-void init_list()
-{
-        int t;
 
-        for (t = 0; t < SIZE; t++)
-                *(list[t]->d_name) = '\0';
-}
+extern int current_element, max_num;
+extern struct dirent* list[50];
+extern struct dirent* list_1;
+
 
 void update_list(const char *name)
 {
@@ -44,36 +38,12 @@ void update_list(const char *name)
                         break;
 
                 list[i] = list_1;
-                if (i == SIZE - 1)
-                {
-                        OLD_SIZE = SIZE;
-                        SIZE += SIZE_INCREMENT;
-
-                        list = (struct dirent **)realloc(list, SIZE * sizeof(struct dirent *));
-                        if (!list)
-                        {
-                                printw("Error: can't allocate memory1\n");
-                                getch();
-                                exit(1);
-                        }
-
-                        for (j = OLD_SIZE; j < SIZE; j++)
-                        {
-                                list[j] = (struct dirent *)realloc(list[j], sizeof(struct dirent));
-                                if (!list[j])
-                                {
-                                        printw("Error: can't allocate memory2\n");
-                                        getch();
-                                        exit(2);
-                                }
-                        }
-                }
+               
 
                 i++;
         }
         max_num = i;
-        for (; i < SIZE; i++)
-                *(list[i]->d_name) = '\0';
+       
 
         errno = 0;
         err = closedir(dir);
@@ -120,7 +90,7 @@ void update_screen()
         int i;
         erase(); //чистим экран
                  //выводим все элементы
-        for (i = 0; (i < SIZE) && (*(list[i]->d_name) != '\0'); i++)
+        for (i = 0; i < max_num; i++)
         {
                 //если счетчик равен текущему элементу
                 if (i == current_element)

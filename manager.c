@@ -13,13 +13,13 @@
                 printf("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
         } while (0)
 
-int SIZE = 5, SIZE_INCREMENT = 5, OLD_SIZE;
+
 
 int current_element = 0, max_num; 
 
 char cwd[256];
-struct dirent **list;
-struct dirent *list_1;
+struct dirent* list[50];
+struct dirent* list_1;
 
 int main()
 {
@@ -37,25 +37,9 @@ int main()
 
         getcwd(cwd, 256); //копирует абсолютный путь текущего рабочего каталога в буфер cwd
 
-        list = (struct dirent **)malloc(SIZE * sizeof(struct dirent *));
-        if (!list)
-        {
-                printw("Error: can't allocate memory11\n");
-                getch();
-                exit(3);
-        }
-        for (j = 0; j < SIZE; j++)
-        {
-                list[j] = (struct dirent *)malloc(sizeof(struct dirent));
-                if (!list[j])
-                {
-                        printw("Error: can't allocate memory22\n");
-                        getch();
-                        exit(4);
-                }
-        }
+     
 
-        init_list();
+        
 
         start_color();
         noecho();
@@ -67,7 +51,7 @@ int main()
 
         char path[256], old_path[256], new_path[256], path_1[256], src_path[256], dst_path[256]; 
 
-        max_num = SIZE;
+       
 
         update_list(cwd); //аварийный останов
 
@@ -160,6 +144,7 @@ int main()
                                 mystrplus(old_path, list[current_element]->d_name);
                                 printw("%s\n", "vvedite novyj put"); //!!!
                                 scanw("%s", new_path);
+
                                 rename(old_path, new_path);
                                 update_list(path); //на всякий случай
                                 break;
@@ -237,10 +222,6 @@ int main()
 
        
 
-        for (j = 0; j < SIZE; j++)
-                free(list[j]); ////???????
- 
-        free(list);
 //DEBUG(" goodbye world :(");
 
         return 0;
