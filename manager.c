@@ -1,3 +1,5 @@
+/*еще одна попытка */
+
 #include <ncurses.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -7,19 +9,20 @@
 #include "manager_functions.h"
 #include <string.h>
 
+
 #define DEBUG(fmt, ...)                                                                       \
         do                                                                                    \
         {                                                                                     \
                 printf("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
         } while (0)
 
-
+int SIZE = 5, SIZE_INCREMENT = 5, OLD_SIZE;
 
 int current_element = 0, max_num; 
 
 char cwd[256];
-struct dirent* list[50];
-struct dirent* list_1;
+struct dirent **list;
+struct dirent *list_1;
 
 int main()
 {
@@ -37,9 +40,16 @@ int main()
 
         getcwd(cwd, 256); //копирует абсолютный путь текущего рабочего каталога в буфер cwd
 
-     
-
+        list = (struct dirent **)malloc(SIZE * sizeof(struct dirent *));
+        if (!list)
+        {
+                printw("Error: can't allocate memory11\n");
+                getch();
+                exit(3);
+        }
         
+
+        init_list();
 
         start_color();
         noecho();
@@ -51,9 +61,9 @@ int main()
 
         char path[256], old_path[256], new_path[256], path_1[256], src_path[256], dst_path[256]; 
 
-       
+        max_num = SIZE;
 
-        update_list(cwd); //аварийный останов
+        update_list(cwd); 
 
         strcpy(path, cwd); //адрес из cwd записываем в path
 
@@ -82,18 +92,18 @@ int main()
                         switch (choice1)
                         {
                         case '\n':
-                                if (list[current_element]->d_type == DT_DIR)
+                                if (list[current_element]->d_type == DT_DIR)//////?????
                                 {
 
-                                        mystrplus(path, list[current_element]->d_name);
+                                        mystrplus(path, list[current_element]->d_name);//////??????
 
                                         update_list(path); //открыть как каталог
 
                                 }
-                                else if (list[current_element]->d_type == DT_REG) //открыть в редакторе
+                                else if (list[current_element]->d_type == DT_REG) //открыть в редакторе//////?????????
                                 {
                                         strcpy(path_1, path);
-                                        mystrplus(path_1, list[current_element]->d_name);
+                                        mystrplus(path_1, list[current_element]->d_name);//////???????
                                         pid = fork();
                                         if (pid == -1)
                                                 perror("fork");
@@ -118,7 +128,7 @@ int main()
                                 strcpy(new_path, path);
                                 strcpy(old_path, path);
 
-                                mystrplus(old_path, list[current_element]->d_name);
+                                mystrplus(old_path, list[current_element]->d_name);////////???????
                                 scanw("%s", path_1); ///!!!
                                 mystrplus(new_path, path_1);
                                 rename(old_path, new_path);
@@ -126,22 +136,22 @@ int main()
                                 break;
                         case KEY_F(3): //удалить
                                 strcpy(old_path, path);
-                                mystrplus(old_path, list[current_element]->d_name);
+                                mystrplus(old_path, list[current_element]->d_name);/////???????
                                 remove(old_path);
                                 update_list(path);
                                 break;
                         case KEY_F(4): //копировать файл
-                                if (list[current_element]->d_type == DT_REG)
+                                if (list[current_element]->d_type == DT_REG)//////????????
                                 {
                                         strcpy(src_path, path);
-                                        mystrplus(src_path, list[current_element]->d_name);
+                                        mystrplus(src_path, list[current_element]->d_name);////////???????
                                 }
                                 else
                                         printw("%s\n", "ne mogu kopirovat dannyj tip fajla");
                                 break;
-                        case KEY_F(5): //переместить по новому пути?????????
+                        case KEY_F(5): //переместить по новому пути
                                 strcpy(old_path, path);
-                                mystrplus(old_path, list[current_element]->d_name);
+                                mystrplus(old_path, list[current_element]->d_name);//////????????
                                 printw("%s\n", "vvedite novyj put"); //!!!
                                 scanw("%s", new_path);
 
@@ -219,9 +229,8 @@ int main()
         getch();
 
         endwin();
-
-       
-
+     
+        free(list);
 //DEBUG(" goodbye world :(");
 
         return 0;
