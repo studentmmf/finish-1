@@ -1,4 +1,4 @@
-/*еще одна попытка*/
+/*еще одна попытка исправляю*/
 
 #include <ncurses.h>
 #include <sys/stat.h>
@@ -18,8 +18,9 @@
 
 extern int SIZE, SIZE_INCREMENT, OLD_SIZE;
 extern int current_element, max_num;
-extern struct dirent **list;
+extern struct dirent **list, **tmp;
 extern struct dirent *list_1;
+
 void init_list()
 {
         int t;
@@ -59,14 +60,17 @@ void update_list(const char *name)
                         OLD_SIZE = SIZE;
                         SIZE += SIZE_INCREMENT;
 
-                        list = (struct dirent **)realloc(list, SIZE * sizeof(struct dirent *));
-                        if (!list)
+                        tmp = (struct dirent **)realloc(list, SIZE * sizeof(struct dirent *));
+                        if (tmp != NULL)
                         {
-                                printw("Error: can't allocate memory1\n");
-                                getch();
-                                exit(1);
+                                list = tmp;
                         }
-
+                        else
+                        {
+                               free(list);
+printw("oshibka vydeleniya pamyati\n");
+exit(1);
+                        }
                       
                 }
 

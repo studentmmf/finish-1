@@ -1,4 +1,4 @@
-/*еще одна попытка */
+/*еще одна попытка исправляю*/
 
 #include <ncurses.h>
 #include <sys/stat.h>
@@ -16,12 +16,12 @@
                 printf("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
         } while (0)
 
-int SIZE = 5, SIZE_INCREMENT = 5, OLD_SIZE;
+int SIZE = 2, SIZE_INCREMENT = 5, OLD_SIZE;
 
 int current_element = 0, max_num; 
 
 char cwd[256];
-struct dirent **list;
+struct dirent **list, **tmp;
 struct dirent *list_1;
 
 int main()
