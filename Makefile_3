@@ -1,0 +1,2 @@
+all:
+	gcc -g inter.c -lncurses inter_functions.c -o inter
