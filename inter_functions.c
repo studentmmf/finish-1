@@ -4,35 +4,42 @@
 #include "inter_functions.h"
 #include <string.h>
 
-char *args[][3] = {{"vyhod", "", ""}, {"ls", "/bin/ls", "ls"}, {"vi", "/bin/vi", "vi"}};
-
-int SIZE = 3;
-char tmp[80];
+char *match[][3] = {{"vyhod", "", ""}, {"ls", "/bin/ls", "ls"}, {"vi", "/bin/vi", "vi"}, {"cat", "/bin/cat", "cat"}, {"echo", "/bin/echo", "echo"}, {"mkdir", "/bin/mkdir", "mkdir"}};//список команд
+char *args[5];
+int SIZE = 6;//количество утилит
+char tmp[80];//команда с параметрами
 
 int menu()//выбор команды
 {
-int i;
+int i=0;
 
 printw("vvedite comandu\n");
-scanw("%s", tmp);
+getstr(tmp);
 
+char *pch = strtok(tmp, " "); //разбиваем на слова и записываем в args
 
+while(pch != NULL)
+{
+args[i] = pch;
+pch = strtok(NULL, " ");
+i++;
+}
 
 
 for(i=0;i<SIZE; i++)
 {
-if(!strcmp(tmp, args[i][0]))
+if(!strcmp(args[0], match[i][0]))
 {
-//printw("debug %s %s\n", args[i][1], args[i][2]); 
+
 return i;
-}//vrode vse rabotaet
+}
 }
 
 printw("neizvestnaya komanda\n");
 return -1;
 }
 
-int proc(int num)//fork exec wait// принимает path и может еще что-то
+int proc(int num)
 {
 int status;
 pid_t pid, pid_1;
@@ -40,22 +47,22 @@ int ret;
 if(num == -1) return 0;
 if(num == 0) return 1;
 
-else //fork exec wait
+else 
 {
 pid_1 = fork();
 
 if(pid_1 == -1)
 perror("fork");
-if(!pid_1)
+
+if(!pid_1)//дочерний
 {
-
-
 int ret;
-ret = execl(args[num][1], args[num][2], NULL);///////bad address
 
+ret = execv(match[num][1],args);//args должен завершаться NULL!!!!
 if (ret == -1) {
-perror("execl");
+perror("execv");
 exit(EXIT_FAILURE);}
+}
 
 pid = wait(&status);
 
@@ -65,15 +72,11 @@ perror("wait");
 printw("pid=%d\n", pid);
 
 if (WIFEXITED (status))
-printw("Нормальное завершение, статус=%d\n", WEXITSTATUS (status));
-if (WIFSIGNALED (status))
-//printw("Убит сигналом=%d%s\n",WTERMSIG (status), WCOREDUMP (status) ? " (dumped core)" : "");
+printw("Normalnoe zavershenie, status=%d\n", WEXITSTATUS (status));
 if (WIFSTOPPED (status))
-printw("Остановлен сигналом=%d\n",WSTOPSIG (status));
+printw("Ostanovlen signalom=%d\n",WSTOPSIG (status));
 if (WIFCONTINUED (status))
-printw("Продолжен\n");
-}
-
+printw("Prodolzhen\n");
 return 0;
 }
 }

@@ -1,7 +1,5 @@
 #include <ncurses.h> 
 #include <stdio.h>
-#include <ncurses.h> 
-#include <stdio.h>
 #include <stdlib.h>
 #include "inter_functions.h"
 #include <string.h>
@@ -14,7 +12,6 @@ keypad(stdscr, TRUE);
 while(1)
 {
 if(proc(menu()))break;
-
 }
 
 refresh();
