@@ -1,4 +1,4 @@
-#include <ncurses.h> 
+#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "inter_functions.h"
@@ -6,17 +6,18 @@
 
 int main()
 {
-initscr();
-keypad(stdscr, TRUE); 
+	initscr();
+	keypad(stdscr, TRUE);
+	int process_completed;
+	while (1) {
+		process_completed = process_command(select_command());
+		if (process_completed == 1)
+			break;
+	}
 
-while(1)
-{
-if(proc(menu()))break;
-}
+	refresh();
+	getch();
+	endwin();
 
-refresh();
-getch();
-endwin();
-
-return 0;
+	return 0;
 }
