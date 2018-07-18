@@ -1,8 +1,20 @@
-#include <ncurses.h>
+#ifndef STDIO_H
+#define STDIO_H
 #include <stdio.h>
+#endif
+#ifndef STDLIB_H
+#define STDLIB_H
 #include <stdlib.h>
-#include "inter_functions.h"
+#endif
+#ifndef STRING_H
+#define STRING_H
 #include <string.h>
+#endif
+#ifndef NCURSES_H
+#define NCURSES_H
+#include <ncurses.h>
+#endif
+#include "inter_functions.h"
 
 int main()
 {
