@@ -7,5 +7,6 @@ void mystrminus(char a[]);
 void init_list();
 void update_list(const char *name);
 void update_screen();
-
+void thread_func_1(FILE *g, FILE *f);//копировать
+void *thread_func();//статус копирования
 #endif

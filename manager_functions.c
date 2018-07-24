@@ -1,5 +1,5 @@
-/*еще одна попытка исправляю*/
 
+#include <pthread.h>
 #include <ncurses.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -20,7 +20,10 @@ extern int SIZE, SIZE_INCREMENT, OLD_SIZE;
 extern int current_element, max_num;
 extern struct dirent **list, **tmp;
 extern struct dirent *list_1;
-
+extern char ch;
+extern FILE *f, *g, *c;
+extern WINDOW *my_window;
+     extern int i;  
 void init_list()
 {
         int t;
@@ -181,3 +184,26 @@ void mystrminus(char a[]) //от пути отсоединяем хвост "/hb
         a[j - i] = '\0';
 }
 
+void thread_func_1(FILE *g, FILE *f)
+{//ch - глобальная
+
+                        while (!feof(f))
+                        {
+                                ch = fgetc(f);
+                                if (!feof(f))
+                                        fputc(ch, g);
+                        } i = 1;
+}
+
+void *thread_func()//потоковая функция
+{
+if(!feof(f)){
+wprintw(my_window, "kopiruetsya\n");
+}
+
+
+wprintw(my_window, "%d", i);
+wprintw(my_window, "skopirovano");
+wrefresh(my_window);
+pthread_exit(0);//завершение потока
+}

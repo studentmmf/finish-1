@@ -1,2 +1,2 @@
 all:
-	gcc -g manager.c -lncurses manager_functions.c -o manager
+	gcc -g manager.c -D_REENTRANT -pthread -lncurses manager_functions.c -o manager

@@ -1,5 +1,5 @@
-/*еще одна попытка исправляю*/
 
+#include <pthread.h>
 #include <ncurses.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -21,22 +21,29 @@ int SIZE = 2, SIZE_INCREMENT = 5, OLD_SIZE;
 int current_element = 0, max_num; 
 
 char cwd[256];
+char ch;
 struct dirent **list, **tmp;
 struct dirent *list_1;
-
+FILE *f, *g, *c;
+WINDOW *my_window;
+        int i = 0;
 int main()
 {
         initscr();
 
         keypad(stdscr, TRUE); 
-       
 
+        pthread_t tid; /* идентификатор потока */
+        pthread_attr_t attr; /* отрибуты потока */
+
+        my_window = newwin(10,20,20,30);
+        
         int j;
         pid_t pid;
         int ret;
-
-        FILE *f, *g, *c;
-        char ch;
+        int result;
+        //FILE *f, *g, *c;
+        
 
         getcwd(cwd, 256); //копирует абсолютный путь текущего рабочего каталога в буфер cwd
 
@@ -52,7 +59,7 @@ int main()
         init_list();
 
         start_color();
-        noecho();
+        //noecho();
         //создаем цветовые пары
         init_pair(1, COLOR_RED, COLOR_BLACK);
         init_pair(2, COLOR_WHITE, COLOR_BLACK);
@@ -143,6 +150,7 @@ int main()
                         case KEY_F(4): //копировать файл
                                 if (list[current_element]->d_type == DT_REG)//////????????
                                 {
+                                        
                                         strcpy(src_path, path);
                                         mystrplus(src_path, list[current_element]->d_name);////////???????
                                 }
@@ -198,12 +206,25 @@ int main()
                                 printw("%s\n", "ne udaetsya sozdat fajl5");
                                 return;
                         }
-                        while (!feof(g))
-                        {
-                                ch = fgetc(g);
-                                if (!feof(g))
-                                        fputc(ch, f);
-                        }
+
+                                  //так работает, но только после нажатия вверх\вниз, иначе глючит
+                            
+                        /* получаем дефолтные значения атрибутов */
+                       // pthread_attr_init(&attr);
+                        
+                        
+/* создаем новый поток */
+                       result = pthread_create(&tid,NULL,thread_func, NULL);
+if (result != 0) {
+perror("Creating the first thread");
+return EXIT_FAILURE;
+}
+pthread_detach(tid);//отсоединяем поток
+
+thread_func_1(g, f);//копируем в основном потоке
+
+                       // pthread_join(tid,NULL);//ожидаем завершения потока
+
                         fclose(f);
                         fclose(g);
                         update_list(path);
@@ -227,7 +248,7 @@ int main()
 
         refresh();
         getch();
-
+        delwin(my_window);
         endwin();
      
         free(list);
