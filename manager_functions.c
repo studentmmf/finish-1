@@ -9,7 +9,6 @@
 #include "manager_functions.h"
 #include <string.h>
 
-
 #define DEBUG(fmt, ...)                                                                       \
         do                                                                                    \
         {                                                                                     \
@@ -23,15 +22,14 @@ extern struct dirent *list_1;
 extern char ch;
 extern FILE *f, *g, *c;
 extern WINDOW *my_window;
-     extern int i;  
+extern int i;
 void init_list()
 {
         int t;
 
         for (t = 0; t < SIZE; t++)
-                
-                   list[t] = 0;
-           
+
+                list[t] = 0;
 }
 
 void update_list(const char *name)
@@ -54,9 +52,7 @@ void update_list(const char *name)
                         break;
 
                 list[i] = list_1;
-//printw("%s", list[i]->d_name);//здесь работает без ошибок
-      
-                
+                //printw("%s", list[i]->d_name);//здесь работает без ошибок
 
                 if (i == SIZE - 1)
                 {
@@ -70,18 +66,17 @@ void update_list(const char *name)
                         }
                         else
                         {
-                               free(list);
-printw("oshibka vydeleniya pamyati\n");
-exit(1);
+                                free(list);
+                                printw("oshibka vydeleniya pamyati\n");
+                                exit(1);
                         }
-                      
                 }
 
                 i++;
         }
         max_num = i;
-        for (; i < SIZE; i++)                
-                    list[i] = 0;
+        for (; i < SIZE; i++)
+                list[i] = 0;
         errno = 0;
         err = closedir(dir);
 
@@ -92,7 +87,7 @@ exit(1);
 int menu()
 {
         int ch;
-        
+
         printw("Vyberite katalog ili fajl i nazhmite Enter dlya vybora\n");
         printw("F2 : sozdat novyj katalog v tekushem kataloge\n");
         printw("F3 : sozdat novyj fajl v tekushem kataloge\n");
@@ -109,7 +104,7 @@ int menu()
 int menu1()
 {
         int ch;
-        
+
         printw("Enter : otkryt\n");
         printw("F2 : pereimenovat\n");
         printw("F3 : udalit\n");
@@ -123,9 +118,8 @@ int menu1()
 }
 
 void update_screen()
-{       
-         
-        
+{
+
         int i;
         erase(); //чистим экран
                  //выводим все элементы
@@ -137,15 +131,13 @@ void update_screen()
                         //включаем атрибут "жирный"
                         attron(A_BOLD);
                         //выбираем цветовую пару номер 1
-                        attron(COLOR_PAIR(1));                        
+                        attron(COLOR_PAIR(1));
                         //выводим строковое представление элемента списка
-                        printw("%s      ", list[i]->d_name);/////?????
-                     
-                        
-                      
-                        if (list[i]->d_type == DT_DIR)////???????
+                        printw("%s      ", list[i]->d_name); /////?????
+
+                        if (list[i]->d_type == DT_DIR) ////???????
                                 printw("%s\n", "katalog");
-                        else if (list[i]->d_type == DT_REG)////?????
+                        else if (list[i]->d_type == DT_REG) ////?????
                                 printw("%s\n", "fajl");
                         else
                                 printw("%s\n", "neizvestnyj tip fajla");
@@ -156,10 +148,10 @@ void update_screen()
                 else //иначе выводим обычным цветом
                 {
                         attron(COLOR_PAIR(2));
-                        printw("%s      ", list[i]->d_name);/////??????
-                        if (list[i]->d_type == DT_DIR)//////???????
+                        printw("%s      ", list[i]->d_name); /////??????
+                        if (list[i]->d_type == DT_DIR)       //////???????
                                 printw("%s\n", "katalog");
-                        else if (list[i]->d_type == DT_REG)////??????
+                        else if (list[i]->d_type == DT_REG) ////??????
                                 printw("%s\n", "fajl");
                         else
                                 printw("%s\n", "neizvestnyj tip fajla");
@@ -170,8 +162,8 @@ void update_screen()
 
 void mystrplus(char a[], char b[]) //справа к пути приписываем "/имя"
 {
-     strcat(a,"/");
-strcat(a, b);
+        strcat(a, "/");
+        strcat(a, b);
 }
 
 void mystrminus(char a[]) //от пути отсоединяем хвост "/hbvfhkvdbv"
@@ -184,26 +176,28 @@ void mystrminus(char a[]) //от пути отсоединяем хвост "/hb
         a[j - i] = '\0';
 }
 
-void thread_func_1(FILE *g, FILE *f)
-{//ch - глобальная
-
-                        while (!feof(f))
-                        {
-                                ch = fgetc(f);
-                                if (!feof(f))
-                                        fputc(ch, g);
-                        } i = 1;
-}
-
-void *thread_func()//потоковая функция
+void *thread_func_1()
 {
-if(!feof(f)){
-wprintw(my_window, "kopiruetsya\n");
+
+        while (!feof(f))
+        {
+                ch = fgetc(f);
+                if (!feof(f))
+                        fputc(ch, g);
+                wprintw(my_window, "(potok 1) %c\n", ch);
+                wrefresh(my_window);
+                sleep(1);
+        }
+        pthread_exit(0);
 }
 
-
-wprintw(my_window, "%d", i);
-wprintw(my_window, "skopirovano");
-wrefresh(my_window);
-pthread_exit(0);//завершение потока
+void *thread_func_2()
+{
+        while (!feof(f))
+        {
+                wprintw(my_window, "(potok 2) kopiruetsya\n");
+                wrefresh(my_window);
+                sleep(1);
+        }
+        pthread_exit(0);
 }
