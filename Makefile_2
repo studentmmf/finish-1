@@ -1,2 +1,2 @@
 all:
-	gcc -g manager.c -D_REENTRANT -pthread -lncurses manager_functions.c -o manager
+	gcc -g magaz_threads.c -D_REENTRANT -pthread magaz_threads_functions.c -o magaz
