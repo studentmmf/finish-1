@@ -1,2 +1,2 @@
 all:
-	gcc -g inter.c -lncurses inter_functions.c -o inter
+	gcc -g inter_pipe.c -lncurses inter_pipe_functions.c -o intpipe
