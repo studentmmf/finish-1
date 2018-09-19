@@ -19,17 +19,25 @@
 #include <unistd.h>
 //#include <sys/types.h>
 
+#define DEBUG(fmt, ...)                                                                       \
+        do                                                                                    \
+        {                                                                                     \
+                printf("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
+        } while (0)
+
 char* commands[][3] = {{"vyhod", "", ""},
+                       {"awk", "/bin/awk", "awk"},
                        {"grep", "/bin/grep", "grep"},
                        {"ls", "/bin/ls", "ls"},
                        {"vi", "/bin/vi", "vi"},
                        {"cat", "/bin/cat", "cat"},
                        {"echo", "/bin/echo", "echo"},
-					   {"mkdir", "/bin/mkdir", "mkdir"}}; 
+					   {"mkdir", "/bin/mkdir", "mkdir"},
+					   {"sort", "usr/bin/sort", "sort"}}; 
 char* exec_args_1[5];
 char* exec_args_2[5];
 int flag;
-int   commands_count = 7; 
+int   commands_count = 9; 
 		
 
 void enter_command() 
@@ -37,38 +45,76 @@ void enter_command()
 	char  temporary_string[80];	
 	printw("vvedite comandu\n");
 	getstr(temporary_string);
-    
+    int count;
+    char *word_set[20];
+    int i = 0;
+    int j;
+    int k;
+    int n;
+    flag = 0;
 	char *word = strtok(temporary_string, " "); // Разбиваем на слова 
-	int i = 0;
-	flag = 0;
-	while(word != 0){
+    while(word != 0)
+    {
+    	word_set[i] = word;
+    	if(strcmp(word, "|") == 0)
+    	{
+    		j = i;
+    		flag = 1;
+    		//word = strtok(0, " ");
+    	}
+    	word = strtok(0, " ");
+    	i++;
+    } 
+    k = i;
+    if(flag)
+     {//DEBUG("goodbuy world", j);
+	//exec_args_1[0] = word_set[0];
+	//exec_args_1[1] = word_set[1];
+ 	for(i=0;i<j;i++){
+		exec_args_1[i] = word_set[i];
+		printf("%s\n", exec_args_1[i]);
+		//strcpy(exec_args_1[i], word_set[i]);
+	}//exec_args_1[2] = NULL;
+		
+		//exec_args_2[0] = word_set[3];
+		//exec_args_2[1] = word_set[4];
+	for(i=j+1, n=0 ;i<k;i++,n++){
+		exec_args_2[n] = word_set[i];
+		printf("%s\n", exec_args_2[n]);
+	}//exec_args_2[2] = NULL;
+     }
+     //else
+     if(!flag)
+     {
+     	for(i=0;i<k;i++)
+     	{
+     		exec_args_1[i] = word_set[i];
+     		printf("%s\n", exec_args_1[i]);
+     	}//exec_args_1[2] = NULL;
+     }
+  // printf("%s", exec_args_1[2]);
+   /* for(i=0;i<2;i++)
+    	{n=0;
+    		do{
+    			printf("%c", exec_args_1[i][n]);
+    			n++;
+    		}while(exec_args_1[i][n] != '\0');
+    		//printf("%c ", exec_args_1[i][n]);
+    		printf("\n");
+    		//printf("%s %s\n",exec_args_1[i], exec_args_2[i]);
+    	}
+    	//printf("%c\n",'\0');
+    	for(i=0;i<2;i++)
+    	{n=0;
+    		do{
+    			printf("%c", exec_args_2[i][n]);
+    			n++;
+    		}while(exec_args_2[i][n] != '\0');
+    		//printf("%c ", exec_args_2[i][n]);
+    		printf("\n");
+    		//printf("%s %s\n",exec_args_1[i], exec_args_2[i]);
+    	}*/
 
-		exec_args_1[i] = word;
-		printw("%s%d\n",exec_args_1[i], 1);
-		word = strtok(0, " ");
-        
-		//if(word == "|")//так не разделяет,но работает с ошибками
-		if (strcmp("|", word) == 0)//так разделяет, но не работает
-		{
-			exec_args_1[i++] = NULL;
-
-		flag = 1;//есть вторая команда
-		printw("hello |\n");
-		 break;		
-		}
-		i++;
-	}
-	if(flag){
-	i=0; 
-			
-			word = strtok(0, " ");
-			while(word != 0){
-        exec_args_2[i] = word;
-        printw("%s\n",exec_args_2[i]);		
-		word = strtok(0, " ");
-		i++; }
-	}
-exec_args_2[i++] = NULL;
 }
 	int select_command_1()
 	{ 
@@ -81,6 +127,7 @@ exec_args_2[i++] = NULL;
 			return i;
 		}
 	}
+	//return 3;
 		printw("neizvestnaya komanda\n");
 	return -1;
     
@@ -97,13 +144,12 @@ int select_command_2()
 			return i;
 		}
 	}
+	//return 2;
 		printw("neizvestnaya komanda\n");
 	return -1;
     
 }
 	
-
-
 int process_two_command(int number_1, int number_2)
 {
 	int    file_discr[2];
@@ -128,51 +174,73 @@ else {
 
 		if (pid_1 == 0) {// Дочерний
 		
-			dup2(file_discr[1], STDOUT_FILENO);
+			//dup2(file_discr[1], STDOUT_FILENO);
+			//close(file_discr[1]);
+			close(file_discr[0]);
+			close(1);
+			dup(file_discr[1]);
 			close(file_discr[1]);
-
-			ret = execv(commands[number_1][1], exec_args_1); 
+            
+			//exec_args_1[0] = "ls";
+			//exec_args_1[1] = "-l";
+		
+			printf("hello_1 %s %s %s\n",commands[number_1][1], exec_args_1[0], exec_args_1[1]);
+			ret = execv(commands[number_1][1],exec_args_1);
 			if (ret == -1) {
 				perror("execv");
 				exit(EXIT_FAILURE);	}
 		}
 
-        pid = wait(&status);
-
-		if (pid == -1)
-			perror("wait");
-
-		printw("pid=%d\n", pid);
-
-		if (WIFEXITED(status))
-			printw("Normalnoe zavershenie, status=%d\n", WEXITSTATUS(status));
-		if (WIFSTOPPED(status))
-			printw("Ostanovlen signalom=%d\n", WSTOPSIG(status));
-		if (WIFCONTINUED(status))
-			printw("Prodolzhen\n");
+        
 
         pid_1 = fork();
 
         if (pid_1 == 0) {// Дочерний
 		
-			dup2(file_discr[0], STDIN_FILENO);
+			//dup2(file_discr[0], STDIN_FILENO);
+			//close(file_discr[0]);
+			close(file_discr[1]);
+			close(0);
+			dup(file_discr[0]);
 			close(file_discr[0]);
-
-			ret = execv(commands[number_2][1], exec_args_2); 
+            
+			//exec_args_2[0] = "grep";
+			//exec_args_2[1] = "a*";
+			
+			printf("hello_2 %s %s %s\n",commands[number_2][1], exec_args_2[0], exec_args_2[1]);
+			 ret = execv(commands[number_2][1],exec_args_2);
 			if (ret == -1) {
 				perror("execv");
 				exit(EXIT_FAILURE);	}
 		}
+
+		close(file_discr[0]);
+		close(file_discr[1]);
+
+pid = wait(&status);
+
+		if (pid == -1)
+			perror("wait");
+
+		printw("pid_1=%d\n", pid);
+
+		if (WIFEXITED(status))
+			printw("Normalnoe zavershenie_1, status=%d\n", WEXITSTATUS(status));
+		if (WIFSTOPPED(status))
+			printw("Ostanovlen signalom=%d\n", WSTOPSIG(status));
+		if (WIFCONTINUED(status))
+			printw("Prodolzhen\n");
+
 
 		pid = wait(&status);
 
 		if (pid == -1)
 			perror("wait");
 
-		printw("pid=%d\n", pid);
+		printw("pid_2=%d\n", pid);
 
 		if (WIFEXITED(status))
-			printw("Normalnoe zavershenie, status=%d\n", WEXITSTATUS(status));
+			printw("Normalnoe zavershenie_2, status=%d\n", WEXITSTATUS(status));
 		if (WIFSTOPPED(status))
 			printw("Ostanovlen signalom=%d\n", WSTOPSIG(status));
 		if (WIFCONTINUED(status))
@@ -180,6 +248,8 @@ else {
 		return 0;
 	        }
        }
+
+
 
 int process_command(int number)
 {
@@ -199,13 +269,14 @@ int process_command(int number)
 
 		if (pid_1 == 0) {// Дочерний
 		
-			
+			exec_args_1[0] = "ls";
+			exec_args_1[1] = "-l";
 
-			ret = execv(commands[number][1], exec_args_1); 
+printf("hello_1 %s %s %s\n",commands[number][1], exec_args_1[0], exec_args_1[1]);
+ ret = execv(commands[number][1],exec_args_1);
 			if (ret == -1) {
 				perror("execv");
-				exit(EXIT_FAILURE);
-			}
+				exit(EXIT_FAILURE);	}
 		}
 
 		pid = wait(&status);
