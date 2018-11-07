@@ -1,8 +1,14 @@
 #ifndef INTER_PIPE_FUNCTIONS_H
 #define INTER_PIPE_FUNCTIONS_H
-int process_two_command(int number_1, int number_2);
-int process_command(int number);
-int select_command_1();
-int select_command_2();
-void enter_command();
+int process_two_command(char *exec_args_1[5], char *exec_args_2[5]);
+int process_command(char *exec_args_1[5]);
+int select_command(char *exec_args_1[5]);
+int enter_command(char *exec_args_1[5], char *exec_args_2[5]);
+
+#define DEBUG(fmt, ...)                                                                       \
+        do                                                                                    \
+        {                                                                                     \
+                printw("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); getch();\
+        } while (0)
+
 #endif

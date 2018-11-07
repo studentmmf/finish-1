@@ -19,34 +19,45 @@
 #include <unistd.h>
 //#include <sys/types.h>
 
-#define DEBUG(fmt, ...)                                                                       \
-        do                                                                                    \
-        {                                                                                     \
-                printf("%s %s (%d): " fmt "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
-        } while (0)
+void args_clean(char *exec_args_1[5])
+{
+	int i;
+	for (i = 0; i < 5; i++) {
+		if(exec_args_1[i] == NULL)
+			break;
+		free(exec_args_1[i]);
+	}
+}
 
-extern int flag;
 int main()
 {
-	//flag = 1;////////////////////////////!!!!!!!!!!!!!!!!!!!!!!!!
 	initscr();
 	keypad(stdscr, TRUE);
-	int process_completed;
-	//enter_command();
-	//process_two_command(select_command_1(), select_command_2());
-    while (1) {
-		enter_command();
-		if(flag){
-		process_completed = process_two_command(select_command_1(), select_command_2());
-		if (process_completed == 1)
-	    break;}
-		//else
-		if(!flag) {
-			process_completed = process_command(select_command_1());
-		if (process_completed == 1)
-			break;}
+	int process_completed = 0;
+
+	char *exec_args_2[5], *exec_args_1[5];
+
+	while (1) {
+		int flag = enter_command(exec_args_1, exec_args_2);
+		if(exec_args_1[0] == NULL)
+			continue;
+		//DEBUG("%d %p -> '%s', %p -> '%s'", getpid(), exec_args_1[0], exec_args_1[0], exec_args_1[1], exec_args_1[1]);
+		if (flag) {
+			process_completed = process_two_command(exec_args_1, exec_args_2);
+			if (process_completed == 1)
+				break;
 		}
-	
+		
+		if (!flag) {
+			//DEBUG("%d %p -> '%s', %p -> '%s'", getpid(), exec_args_1[0], exec_args_1[0], exec_args_1[1], exec_args_1[1]);
+			process_completed = process_command(exec_args_1);
+			if (process_completed == 1)
+				break;
+		}
+
+		args_clean(exec_args_1);
+		args_clean(exec_args_2);
+	}
 
 	refresh();
 	getch();
