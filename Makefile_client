@@ -1,0 +1,2 @@
+all:	
+	gcc chat_client.c -o client -D_REENTRANT -pthread -lncursesw

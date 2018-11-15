@@ -1,0 +1,2 @@
+all:
+	gcc chat_server.c -o server -D_REENTRANT -pthread
