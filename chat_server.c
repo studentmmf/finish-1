@@ -6,6 +6,8 @@
 #include <sys/msg.h>
 #include <pthread.h>
 #include <ncurses.h>
+#include <string.h>
+#include <errno.h>
 #include "chat_server_functions.h"
 #define MAX_MSG_SIZE 80
 #define DEBUG(fmt, ...)                                                               \
@@ -40,7 +42,8 @@ int main()
 
 void *recieve_pid()
 {
-	key_t key = ftok(".",'m');
+	key_t key = ftok("/home/grigoriy/Рабочий стол/chat/abc",16L);
+	DEBUG("hello11 %d", key);
 	int id = msgget(key, IPC_CREAT|0666); 
 	struct mymsgbuf buf_1;
 	int i;
@@ -56,11 +59,14 @@ void *recieve_pid()
 
 void rcv_snd(struct mymsgbuf buf_1)///???
 {
-	key_t key = ftok(",",16L);
+	key_t key = ftok("/home/grigoriy/Рабочий стол/chat/efg",16L);
+	
 	int msg_id = msgget(key, IPC_CREAT|0666);
+	DEBUG("hello22 %d %d", key, msg_id);
 	int id;
 	while( (id = msgrcv(msg_id,&buf_1,sizeof(struct mymsgbuf),2000L,0)) != -1)
 	{
+		DEBUG("hello2222= %d", id);
 		int pid; char tmp[255]; 
 		sscanf(buf_1.mtext,"%d:%s",&pid,tmp);
 		printf("%d -> %s\n",pid,tmp);
@@ -73,13 +79,17 @@ void rcv_snd(struct mymsgbuf buf_1)///???
 			{                           
 				char filename[255] = "";
 				sprintf(filename,"+%d",clients[i]);
+				
+				FILE *ptr = fopen(filename, "+w");
 				key_t key1 = ftok(filename,16L);
+				DEBUG("hello33 %d", key1);
 				int id_1 = msgget(key1, IPC_CREAT|0666); // получение доступа к очереди клиента
 				struct mymsgbuf buf;
 				buf.mtype = 1234L;
 				sprintf(buf.mtext,"%s\n",tmp);
-				DEBUG("snd %s %d %d", buf.mtext, i, id); 
+				DEBUG("snd %s %d %d", buf.mtext, pid, clients[i]); 
 				int id_2 = msgsnd(id_1,&buf,sizeof(struct mymsgbuf),IPC_NOWAIT); // отправка
+				fclose(ptr);
 			}
 		}
 	}
